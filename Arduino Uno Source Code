@@ -8,11 +8,11 @@ SoftwareSerial ss(3, 4); // Arduino RX, TX to conenct to GPS module.
 
 static void smartdelay(unsigned long ms);
 
-int GPS = 5;
-int x;
-int plevel;
+int GPS = 5; // Establish pin that controls the MOSFET to turn the GPS on and off
+int x; // Used to enter and leave while loops
+int plevel; // 2- Battery good, 1-Battery low, 0-Battery dead
 
-char DeviceID[10]="T1"; //DeviceID or Device identifier in GPSWOX.com
+char DeviceID[10]="T1"; //Device identifier
 
 String datastring1="";
 String datastring2="";
@@ -59,7 +59,7 @@ void loop()
   
   voltagelevel();
 
-  if (plevel == 0)
+  if (plevel == 0) // If battery is dead, send one last GPS location and never turn GPS on again
       {
         datastring1 +=dtostrf(flat1, 0, 6, gps_lat); 
         datastring2 +=dtostrf(flon1, 0, 6, gps_lon);
@@ -84,10 +84,10 @@ void loop()
         while(1);
       }
   
-  digitalWrite(GPS, LOW);
-  smartdelay(1800000);
+  digitalWrite(GPS, LOW); // Start with GPS off
+  smartdelay(1800000); // Delay in milliseconds, 10 minutes currently
   
-  digitalWrite(GPS, HIGH);
+  digitalWrite(GPS, HIGH); // Turn GPS on
 
   voltagelevel();
   if (plevel == 0)
@@ -115,7 +115,7 @@ void loop()
         while(1);
       }
         
-   while(x)
+   while(x) // Constantly get GPS coordinates until 3 in a row the same, then send and turn GPS off
    {
       gps.f_get_position(&flat1, &flon1, &age1);      
       flon1 == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon1, 6;//save six decimal places 
@@ -170,7 +170,7 @@ static void smartdelay(unsigned long ms)
   } while (millis() - start < ms);
 }
 
-//If the packet arrive LG01, LG01 will send a ACK and here will receive it and turn on the led.  
+//If the packet arrive LG01, LG01 will send a ACK and here will receive it and turn on the led. Not used but could be for the future
 void receivepacket(){
     uint8_t indatabuf[RH_RF95_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(indatabuf);
@@ -198,7 +198,7 @@ void receivepacket(){
     }
 }
 
- void voltagelevel()
+ void voltagelevel() // Reads level of analog input to sense voltage level, levels should be adjusted if different battery is used
 {
   int sensorValue = analogRead(A0); //read the A0 pin value
   float voltage = sensorValue * (5.00 / 1023.00) * 2; //convert the value to a true voltage.
