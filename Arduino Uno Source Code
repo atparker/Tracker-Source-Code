@@ -10,7 +10,6 @@ static void smartdelay(unsigned long ms);
 
 int GPS = 5;
 int x;
-int plevel;
 
 char DeviceID[10]="T1"; //DeviceID or Device identifier in GPSWOX.com
 
@@ -131,7 +130,7 @@ void loop()
       flon3 == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flon1, 6;//save six decimal places 
       flat3 == TinyGPS::GPS_INVALID_F_ANGLE ? 0.0 : flat1, 6;
     
-      if ((flon1 == flon2) && (flon1 == flon3) && (flat1 == flat2) && (flat1 == flat3) && (flon != 1000.000000))
+      if ((flon1 == flon2) && (flon1 == flon3) && (flat1 == flat2) && (flat1 == flat3) && (flon1 != 1000.000000))
       {
         datastring1 +=dtostrf(flat1, 0, 6, gps_lat); 
         datastring2 +=dtostrf(flon1, 0, 6, gps_lon);
@@ -181,12 +180,12 @@ void receivepacket(){
        if (rf95.recv(indatabuf, &len))
          {
          Serial.println((char*)indatabuf);        
-         digitalWrite(LED, HIGH);   // turn the LED on (HIGH is the voltage level)
+         //digitalWrite(LED, HIGH);   // turn the LED on (HIGH is the voltage level)
          Serial.println("receive success!");
          }
          else 
          {
-          digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
+          //digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
           Serial.println("receive failed!");
          }
     }
@@ -194,7 +193,7 @@ void receivepacket(){
     {
       // Serial print "No reply, is track_GPS_server running or overranging the receive distance?" if don't get the reply .
       //Serial.println("No reply, is track_GPS_Server running or overranging the receive distance?");
-      digitalWrite(LED, LOW);    // turn the HEART_LED off by making the voltage LOW
+      //digitalWrite(LED, LOW);    // turn the HEART_LED off by making the voltage LOW
     }
 }
 
